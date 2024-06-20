@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -20,12 +21,23 @@ const Title = styled.div`
 `;
 const Logbutton = styled.div``;
 export default function Home() {
-  const [isLogin, setLoigin] = useState(false);
+  const [isLogin, setLogin] = useState(false);
+  const nagivate = useNavigate();
+
+  const clickLogin = () => {
+    if (isLogin) {
+      setLogin(false);
+    } else {
+      nagivate("/login");
+    }
+  };
   return (
     <Wrapper>
       <Header>
         <Title>Football Hub</Title>
-        <Logbutton>{isLogin ? "로그아웃" : "로그인"}</Logbutton>
+        <Logbutton onClick={clickLogin}>
+          {isLogin ? "로그아웃" : "로그인"}
+        </Logbutton>
       </Header>
     </Wrapper>
   );
