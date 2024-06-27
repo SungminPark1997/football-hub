@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
+import { logout } from "./features/user/authSlice";
+import { RootState } from "./store";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -21,12 +24,12 @@ const Title = styled.div`
 `;
 const Logbutton = styled.div``;
 export default function Home() {
-  const [isLogin, setLogin] = useState(false);
+  const isLogin = useSelector((state: RootState) => state.auth.isLogin);
   const nagivate = useNavigate();
-
+  const dispatch = useDispatch();
   const clickLogin = () => {
     if (isLogin) {
-      setLogin(false);
+      dispatch(logout());
     } else {
       nagivate("/login");
     }
