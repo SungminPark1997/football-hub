@@ -1,9 +1,8 @@
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
-import { logout } from "./features/user/authSlice";
+import { loginSuccess, logout } from "./features/user/authSlice";
 import { RootState } from "./store";
 
 const Wrapper = styled.div`
@@ -22,7 +21,9 @@ const Header = styled.div`
 const Title = styled.div`
   font-size: 30px;
 `;
-const Logbutton = styled.div``;
+const Logbutton = styled.div`
+  cursor: pointer;
+`;
 export default function Home() {
   const isLogin = useSelector((state: RootState) => state.auth.isLogin);
   const nagivate = useNavigate();
@@ -31,6 +32,7 @@ export default function Home() {
     if (isLogin) {
       dispatch(logout());
     } else {
+      dispatch(loginSuccess());
       nagivate("/login");
     }
   };
