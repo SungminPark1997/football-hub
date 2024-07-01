@@ -3,6 +3,7 @@ import styled, { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import Home from "./home";
 import Login from "./login";
+import Profile from "./profile";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -11,6 +12,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
   },
 ]);
 const GlobalStyles = createGlobalStyle`

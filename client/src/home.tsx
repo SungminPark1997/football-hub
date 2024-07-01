@@ -24,25 +24,36 @@ const Title = styled.div`
 const Logbutton = styled.div`
   cursor: pointer;
 `;
+const ProfileButton = styled.div`
+  cursor: pointer;
+  margin-left: 10px;
+`;
+
 export default function Home() {
   const isLogin = useSelector((state: RootState) => state.auth.isLogin);
-  const nagivate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const clickLogin = () => {
     if (isLogin) {
       dispatch(logout());
     } else {
-      dispatch(loginSuccess());
-      nagivate("/login");
+      navigate("/login");
     }
   };
   return (
     <Wrapper>
       <Header>
         <Title>Football Hub</Title>
-        <Logbutton onClick={clickLogin}>
-          {isLogin ? "로그아웃" : "로그인"}
-        </Logbutton>
+        <div>
+          <Logbutton onClick={clickLogin}>
+            {isLogin ? "로그아웃" : "로그인"}
+          </Logbutton>
+          {isLogin && (
+            <ProfileButton onClick={() => navigate("/profile")}>
+              프로필
+            </ProfileButton>
+          )}
+        </div>
       </Header>
     </Wrapper>
   );
