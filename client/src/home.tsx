@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
 
 import styled from "styled-components";
 import { loginSuccess, logout } from "./features/user/authSlice";
@@ -11,28 +12,45 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.div`
-  height: 20%;
   color: white;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 10px;
 `;
 
 const Title = styled.div`
   font-size: 30px;
 `;
+
+const UserMenuBox = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const Logbutton = styled.div`
   cursor: pointer;
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #444;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
 `;
-const ProfileButton = styled.div`
+
+const IconButton = styled.div`
   cursor: pointer;
-  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  color: white;
 `;
 
 export default function Home() {
   const isLogin = useSelector((state: RootState) => state.auth.isLogin);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const clickLogin = () => {
     if (isLogin) {
       dispatch(logout());
@@ -40,20 +58,21 @@ export default function Home() {
       navigate("/login");
     }
   };
+
   return (
     <Wrapper>
       <Header>
         <Title>Football Hub</Title>
-        <div>
+        <UserMenuBox>
           <Logbutton onClick={clickLogin}>
             {isLogin ? "로그아웃" : "로그인"}
           </Logbutton>
           {isLogin && (
-            <ProfileButton onClick={() => navigate("/profile")}>
-              프로필
-            </ProfileButton>
+            <IconButton onClick={() => navigate("/profile")}>
+              <FaUserCircle size={24} />
+            </IconButton>
           )}
-        </div>
+        </UserMenuBox>
       </Header>
     </Wrapper>
   );
