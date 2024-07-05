@@ -33,7 +33,7 @@ const Wrapper = styled.div`
   height: 100vh;
   display: flex;
   justify-content: center;
-  background-color: #4caf50;
+  background-color: #2c3e50;
 `;
 
 function App() {

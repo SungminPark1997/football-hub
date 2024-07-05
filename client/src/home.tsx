@@ -5,7 +5,10 @@ import { FaUserCircle } from "react-icons/fa";
 import styled from "styled-components";
 import { loginSuccess, logout } from "./features/user/authSlice";
 import { RootState } from "./store";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useState } from "react";
 
+import SideBar from "./component/sidebar";
 const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
@@ -45,11 +48,14 @@ const IconButton = styled.div`
   align-items: center;
   color: white;
 `;
-
+const StyledMenuIcon = styled(MenuIcon)`
+  cursor: pointer;
+`;
 export default function Home() {
   const isLogin = useSelector((state: RootState) => state.auth.isLogin);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isSideBar, setSidebar] = useState(false);
 
   const clickLogin = () => {
     if (isLogin) {
@@ -59,9 +65,15 @@ export default function Home() {
     }
   };
 
+  const clickMenuIcon = () => {
+    setSidebar(!isSideBar);
+  };
+
   return (
     <Wrapper>
       <Header>
+        <StyledMenuIcon onClick={clickMenuIcon} fontSize="large" />
+
         <Title>Football Hub</Title>
         <UserMenuBox>
           <Logbutton onClick={clickLogin}>
@@ -73,7 +85,8 @@ export default function Home() {
             </IconButton>
           )}
         </UserMenuBox>
-      </Header>
+      </Header>{" "}
+      <SideBar isVisible={isSideBar} />
     </Wrapper>
   );
 }
