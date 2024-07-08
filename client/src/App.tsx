@@ -4,6 +4,7 @@ import reset from "styled-reset";
 import Home from "./home";
 import Login from "./login";
 import Profile from "./profile";
+import Write from "./write";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <Profile />,
+  },
+  {
+    path: "/write",
+    element: <Write />,
   },
 ]);
 const GlobalStyles = createGlobalStyle`

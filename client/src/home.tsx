@@ -42,6 +42,17 @@ const Logbutton = styled.div`
   align-items: center;
 `;
 
+const WriteButton = styled.div`
+  cursor: pointer;
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #444;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+`;
+
 const IconButton = styled.div`
   cursor: pointer;
   display: flex;
@@ -68,6 +79,9 @@ export default function Home() {
   const clickMenuIcon = () => {
     setSidebar(!isSideBar);
   };
+  const clickWriteButton = () => {
+    navigate("/write");
+  };
 
   return (
     <Wrapper>
@@ -80,9 +94,13 @@ export default function Home() {
             {isLogin ? "로그아웃" : "로그인"}
           </Logbutton>
           {isLogin && (
-            <IconButton onClick={() => navigate("/profile")}>
-              <FaUserCircle size={24} />
-            </IconButton>
+            <>
+              {" "}
+              <WriteButton onClick={clickWriteButton}>글쓰기</WriteButton>
+              <IconButton onClick={() => navigate("/profile")}>
+                <FaUserCircle size={24} />
+              </IconButton>
+            </>
           )}
         </UserMenuBox>
       </Header>{" "}
