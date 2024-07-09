@@ -4,7 +4,8 @@ import reset from "styled-reset";
 import Home from "./home";
 import Login from "./login";
 import Profile from "./profile";
-import Write from "./write";
+
+import PostForm from "./postform";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,7 +21,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/write",
-    element: <Write />,
+    element: <PostForm />,
   },
 ]);
 const GlobalStyles = createGlobalStyle`
