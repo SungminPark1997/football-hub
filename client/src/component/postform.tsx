@@ -1,15 +1,14 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  background-color: #f9f9f9;
   width: 100%;
   height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Form = styled.form`
@@ -54,34 +53,18 @@ const SubmitButton = styled.button`
 `;
 
 const PostForm = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const navigate = useNavigate();
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
+  const { register, handleSubmit } = useForm();
 
-    console.log("Title:", title);
-    console.log("Content:", content);
-    // 초기화
-    setTitle("");
-    setContent("");
+  const navigate = useNavigate();
+  const onClick = (data: any) => {
     navigate("/");
   };
 
   return (
     <Wrapper>
-      <Form onSubmit={handleSubmit}>
-        <TitleInput
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="제목을 입력하세요"
-        />
-        <ContentInput
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="내용을 입력하세요"
-        />
+      <Form onSubmit={handleSubmit(onClick)}>
+        <TitleInput {...register("title")} placeholder="제목을 입력하시오" />
+        <ContentInput {...register("content")} placeholder="작성할 내용" />
         <SubmitButton type="submit">작성하기</SubmitButton>
       </Form>
     </Wrapper>
