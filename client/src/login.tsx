@@ -2,6 +2,8 @@ import styled from "styled-components";
 
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "./features/user/authSlice";
 const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
@@ -35,8 +37,11 @@ export const Input = styled.input`
 export default function Login() {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const onClick = () => {
-    alert("hi");
+    dispatch(loginSuccess());
+
     navigate("/");
   };
   return (
