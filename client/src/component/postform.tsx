@@ -56,8 +56,27 @@ const PostForm = () => {
   const { register, handleSubmit } = useForm();
 
   const navigate = useNavigate();
-  const onClick = (data: any) => {
-    navigate("/");
+  const onClick = async (data: any) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result);
+        // 폼 제출 후 메인 페이지로 이동
+        navigate("/");
+      } else {
+        console.error("Failed to submit post");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
