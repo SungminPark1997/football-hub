@@ -3,10 +3,11 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "./features/user/authSlice";
-
-interface FormData {
+// 회원가입 폼 데이터 타입 정의
+interface SignupFormData {
   id: string;
   password: string;
+  confirmPassword: string;
 }
 
 const Wrapper = styled.div`
@@ -16,7 +17,8 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
 `;
-export const Form = styled.form`
+
+const Form = styled.form`
   margin-top: 50px;
   margin-bottom: 10px;
   display: flex;
@@ -25,9 +27,8 @@ export const Form = styled.form`
   width: 50%;
 `;
 
-export const Input = styled.input`
+const Input = styled.input`
   padding: 10px 20px;
-
   border: none;
   width: 100%;
   font-size: 16px;
@@ -39,12 +40,12 @@ export const Input = styled.input`
   }
 `;
 
-export default function Login() {
-  const { register, handleSubmit } = useForm<FormData>();
+export default function Signup() {
+  const { register, handleSubmit, watch } = useForm<SignupFormData>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const postLogin = async ({ id, password }: FormData) => {
-    const response = await fetch("http://localhost:5000/api/login", {
+  const postSignup = async ({ id, password }: SignupFormData) => {
+    const response = await fetch("http://localhost:5000/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -53,31 +54,36 @@ export default function Login() {
     });
 
     const data = await response.json();
-    if (response.ok) {
-      localStorage.setItem("token", data.token); // JWT를 로컬 스토리지에 저장
-      dispatch(loginSuccess());
-      navigate("/");
-    } else {
-      console.error(data.message);
-    }
+    console.log("데이터 다시 받아랑", data);
   };
-
-  const onClick = (data: FormData) => {
+  const onClick = (data: SignupFormData) => {
+    // 비밀번호 확인 로직
+    if (data.password !== data.confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    postSignup(data);
     dispatch(loginSuccess());
-    postLogin(data);
 
+    // 회원가입 후 메인 페이지로 이동
     navigate("/");
   };
+
   return (
     <Wrapper>
       <Form onSubmit={handleSubmit(onClick)}>
-        <Input {...register("id")} placeholder="아이디" />
+        <Input {...register("id", { required: true })} placeholder="아이디" />
         <Input
           {...register("password", { required: true, minLength: 6 })}
           placeholder="비밀번호"
           type="password"
         />
-        <Input type="submit" value={"로그인"} />
+        <Input
+          {...register("confirmPassword", { required: true, minLength: 6 })}
+          placeholder="비밀번호 확인"
+          type="password"
+        />
+        <Input type="submit" value={"회원가입"} />
       </Form>
     </Wrapper>
   );

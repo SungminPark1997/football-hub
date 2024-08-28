@@ -7,6 +7,7 @@ import Login from "./login";
 import Profile from "./profile";
 import PostForm from "./component/postform";
 import Header from "./component/header";
+import Signup from "./signUp";
 
 const GlobalStyles = createGlobalStyle`
   ${reset};
@@ -47,6 +48,11 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <Login />,
+      },
+
+      {
+        path: "/signUp",
+        element: <Signup />,
       },
       {
         path: "/profile",
