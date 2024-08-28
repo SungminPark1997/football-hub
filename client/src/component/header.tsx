@@ -21,6 +21,7 @@ const HeaderWrapper = styled.div`
 
 const Title = styled.div`
   font-size: 30px;
+  cursor: pointer;
 `;
 
 const UserMenuBox = styled.div`
@@ -96,10 +97,14 @@ const Header = () => {
     navigate("/write");
   };
 
+  const clickTitle = () => {
+    navigate("/");
+  };
+
   return (
     <HeaderWrapper>
       <StyledMenuIcon onClick={clickMenuIcon} fontSize="large" />
-      <Title>Football Hub</Title>
+      <Title onClick={clickTitle}>Football Hub</Title>
       <UserMenuBox>
         {isLogin ? (
           <>
