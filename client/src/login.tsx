@@ -58,15 +58,16 @@ export default function Login() {
       dispatch(loginSuccess());
       navigate("/");
     } else {
-      console.error(data.message);
+      if (data.message === "idFail") {
+        alert("존재 하지 않는 아이디 입니다.");
+      } else if (data.message === "passwordFail") {
+        alert("패스워드가 틀렸습니다");
+      }
     }
   };
 
   const onClick = (data: FormData) => {
-    dispatch(loginSuccess());
     postLogin(data);
-
-    navigate("/");
   };
   return (
     <Wrapper>
