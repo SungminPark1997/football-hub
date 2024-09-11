@@ -54,6 +54,7 @@ export default function Login() {
 
     const data = await response.json();
     if (response.ok) {
+      console.log(data);
       localStorage.setItem("token", data.token); // JWT를 로컬 스토리지에 저장
       dispatch(loginSuccess());
       navigate("/");
