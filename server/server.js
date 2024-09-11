@@ -27,21 +27,30 @@ app.post("/api/check-id", async (req, res) => {
   }
 });
 app.post("/api/register", async (req, res) => {
-  const { id, password, email, name } = req.body; // 요청에서 추가된 필드 받기
-  console.log(id, password, email, name);
+  const { id, password, email, name } = req.body;
 
   try {
-    // 새로운 사용자 생성, 이름과 이메일 추가
+    // 새로운 사용자 생성
     const user = new User({ id, password, email, name });
-    console.log(user);
+    await user.save(); // 사용자 저장
 
-    // 사용자 데이터 저장
-    await user.save();
+    // 회원가입 후 JWT 발급
+    const token = jwt.sign({ id: user._id }, "your_jwt_secret", {
+      expiresIn: "1h",
+    });
 
-    // 성공 응답
-    res.status(201).json({ message: "User registered successfully" });
+    // 성공 응답, 사용자 정보와 토큰을 함께 전송
+    res.status(201).json({
+      message: "Registration and login successful",
+      token,
+      user: {
+        id: user.id,
+        username: user.name,
+        email: user.email,
+      },
+    });
   } catch (error) {
-    // 오류 발생 시 클라이언트에게 오류 메시지 전송
+    // 오류 발생 시 오류 메시지 응답
     res.status(400).json({ error: error.message });
   }
 });
@@ -49,10 +58,13 @@ app.post("/api/register", async (req, res) => {
 app.post("/api/login", async (req, res) => {
   const { id, password } = req.body;
   try {
+    // 사용자를 ID로 찾기
     const user = await User.findOne({ id });
     if (!user) {
       return res.status(400).json({ message: "idFail" });
     }
+
+    // 비밀번호 비교
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(400).json({ message: "passwordFail" });
@@ -62,7 +74,17 @@ app.post("/api/login", async (req, res) => {
     const token = jwt.sign({ id: user._id }, "your_jwt_secret", {
       expiresIn: "1h",
     });
-    res.status(200).json({ message: "Login successful", token });
+
+    // 사용자 정보와 토큰을 함께 전달
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user.id,
+        username: user.name,
+        email: user.email, // 여기서 'name'은 User 모델에서 추가된 이름 필드
+      },
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
