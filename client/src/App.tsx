@@ -1,4 +1,6 @@
-// App.js
+import React from "react";
+import { Provider } from "react-redux";
+import store from "./store"; // 업데이트된 store 가져오기
 import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
@@ -21,7 +23,7 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const Wrapper = styled.div`
-  width: 100%
+  width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -41,37 +43,23 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/login",
-        element: <Login />,
-      },
-
-      {
-        path: "/signUp",
-        element: <Signup />,
-      },
-      {
-        path: "/profile",
-        element: <Profile />,
-      },
-      {
-        path: "/write",
-        element: <PostForm />,
-      },
+      { path: "/", element: <Home /> },
+      { path: "/login", element: <Login /> },
+      { path: "/signUp", element: <Signup /> },
+      { path: "/profile", element: <Profile /> },
+      { path: "/write", element: <PostForm /> },
     ],
   },
 ]);
 
 function App() {
   return (
-    <Wrapper>
-      <GlobalStyles />
-      <RouterProvider router={router} />
-    </Wrapper>
+    <Provider store={store}>
+      <Wrapper>
+        <GlobalStyles />
+        <RouterProvider router={router} />
+      </Wrapper>
+    </Provider>
   );
 }
 

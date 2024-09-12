@@ -1,12 +1,10 @@
-// components/Header.js
-
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import styled from "styled-components";
-import { logout, loginSuccess } from "../features/user/authSlice"; // 액션을 가져옴
-import { RootState } from "../store"; // 타입 정의를 가져옴
+import { logout, loginSuccess } from "../features/user/authSlice";
+import { RootState } from "../store";
 import MenuIcon from "@mui/icons-material/Menu";
 import SideBar from "./sidebar";
 
@@ -63,23 +61,15 @@ const StyledMenuIcon = styled(MenuIcon)`
 `;
 
 const Header = () => {
-  const isLogin = useSelector((state: RootState) => state.auth.isLogin); // Redux에서 isLogin 상태를 가져옴
+  const isLogin = useSelector((state: RootState) => state.auth.isLogin);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isSideBar, setSidebar] = useState(false);
 
-  useEffect(() => {
-    // JWT 존재 여부를 확인하여 Redux 상태를 업데이트
-    const token = localStorage.getItem("token");
-    if (token) {
-      dispatch(loginSuccess()); // 토큰이 있으면 로그인 상태로 설정
-    }
-  }, [dispatch]);
-
   const clickLogin = () => {
     if (isLogin) {
       dispatch(logout());
-      localStorage.removeItem("token"); // JWT 삭제
+      localStorage.removeItem("token"); // 로그아웃 시 JWT 삭제
     } else {
       navigate("/login");
     }
