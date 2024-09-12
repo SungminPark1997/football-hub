@@ -115,6 +115,8 @@ export default function Signup() {
 
     const data = await response.json();
     console.log("데이터 다시 받아랑", data);
+    localStorage.setItem("token", data.token); // JWT를 로컬 스토리지에 저장
+    dispatch(loginSuccess());
   };
 
   const onClick = (data: SignupFormData) => {
@@ -136,7 +138,6 @@ export default function Signup() {
     }
 
     postSignup(data);
-    dispatch(loginSuccess());
 
     // 회원가입 후 메인 페이지로 이동
     navigate("/");
