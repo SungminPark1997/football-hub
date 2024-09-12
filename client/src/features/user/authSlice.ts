@@ -1,52 +1,41 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+interface User {
+  id: string;
+  username: string;
+  email: string;
+}
+
 interface AuthState {
   isLogin: boolean;
-  //user: User | null;
-  //error: string | null;
+  user: User | null;
+  error: string | null;
 }
 
 const initialState: AuthState = {
   isLogin: false,
-  //user: null,
-  //error: null
+  user: null,
+  error: null,
 };
+
 const authSlice = createSlice({
-  name: "login",
+  name: "auth",
   initialState,
   reducers: {
-    loginSuccess: (state) => {
+    loginSuccess: (state, action: PayloadAction<User>) => {
       state.isLogin = true;
+      state.user = action.payload;
+      state.error = null;
     },
     logout: (state) => {
       state.isLogin = false;
-    },
-  },
-  /*후에 구체적인 작업
-  name: 'auth',
-  initialState: {
-    isAuthenticated: false,
-    user: null,
-    error: null
-  },
-  reducers: {
-    loginRequest: (state) => {
-      state.error = null;
-    },
-    loginSuccess: (state, action) => {
-      state.isAuthenticated = true;
-      state.user = action.payload;
-    },
-    loginFailure: (state, action) => {
-      state.isAuthenticated = false;
       state.user = null;
+    },
+    setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
     },
-    logout: (state) => {
-      state.isAuthenticated = false;
-      state.user = null;
-    }
-  }*/
+  },
 });
 
-export const { loginSuccess, logout } = authSlice.actions;
+export const { loginSuccess, logout, setError } = authSlice.actions;
 export default authSlice.reducer;
