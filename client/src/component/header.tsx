@@ -7,7 +7,6 @@ import { logout, loginSuccess } from "../features/user/authSlice";
 import { RootState } from "../store";
 import MenuIcon from "@mui/icons-material/Menu";
 import SideBar from "./sidebar";
-
 const HeaderWrapper = styled.div`
   color: white;
   display: flex;
@@ -15,9 +14,13 @@ const HeaderWrapper = styled.div`
   align-items: center;
   padding: 10px;
   background-color: #2c3e50;
+  position: relative;
 `;
 
 const Title = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 30px;
   cursor: pointer;
 `;

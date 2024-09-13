@@ -10,6 +10,8 @@ import Profile from "./profile";
 import PostForm from "./component/postform";
 import Header from "./component/header";
 import Signup from "./signUp";
+import editProfile from "./editProfile";
+import EditProfile from "./editProfile";
 
 const GlobalStyles = createGlobalStyle`
   ${reset};
@@ -48,6 +50,7 @@ const router = createBrowserRouter([
       { path: "/signUp", element: <Signup /> },
       { path: "/profile", element: <Profile /> },
       { path: "/write", element: <PostForm /> },
+      { path: "/editProfile", element: <EditProfile /> },
     ],
   },
 ]);
