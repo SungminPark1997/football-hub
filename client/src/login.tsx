@@ -47,7 +47,7 @@ export default function Login() {
 
   const postLogin = async ({ id, password }: FormData) => {
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,6 +63,7 @@ export default function Login() {
             id: data.user.id,
             username: data.user.username,
             email: data.user.email,
+            profileImage: "https://via.placeholder.com/120",
           })
         );
         navigate("/");

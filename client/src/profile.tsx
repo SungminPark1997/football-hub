@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "./features/user/authSlice";
+
 import { RootState } from "./store";
 import { useNavigate } from "react-router-dom";
+import { logout, setImage } from "./features/user/authSlice";
 
 // 스타일 컴포넌트
 const Wrapper = styled.div`
@@ -32,6 +33,7 @@ const ProfileImage = styled.img`
   object-fit: cover;
   margin-bottom: 20px;
   border: 2px solid #3498db;
+  cursor: pointer;
 `;
 
 const Username = styled.h2`
@@ -69,6 +71,8 @@ export default function Profile() {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
 
+  const [profileImage, setProfileImage] = useState(user?.profileImage);
+
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("token"); // 로그아웃 시 토큰 삭제
@@ -76,14 +80,51 @@ export default function Profile() {
   };
 
   const handleEditProfile = () => {
-    // 프로필 편집 화면으로 이동
     navigate("/editProfile");
+  };
+
+  const handleProfileImageClick = () => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.onchange = async () => {
+      if (fileInput.files && fileInput.files[0]) {
+        const formData = new FormData();
+        formData.append("avatar", fileInput.files[0]);
+        formData.append("id", user ? user.id : "아이디 없음");
+        // 서버에 파일 업로드
+        try {
+          const response = await fetch(
+            "http://localhost:5000/api/auth/update-profile",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Image upload failed");
+          }
+
+          const data = await response.json();
+          setProfileImage(data.user.photoUrl);
+          dispatch(setImage(data.user.photoUrl));
+        } catch (error) {
+          console.error("Error uploading the image", error);
+        }
+      }
+    };
+    fileInput.click(); // 파일 선택창을 엽니다.
   };
 
   return (
     <Wrapper>
       <ProfileBox>
-        <ProfileImage src="https://via.placeholder.com/120" alt="Profile" />
+        <ProfileImage
+          src={profileImage}
+          alt="Profile"
+          onClick={handleProfileImageClick}
+        />
         <Username>{user?.username || "User Name"}</Username>
         <Email>{user?.email || "user@example.com"}</Email>
         <Button onClick={handleEditProfile}>프로필 편집</Button>

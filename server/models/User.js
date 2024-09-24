@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true }, // 이메일 (중복 허용 안 함)
   name: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }, // 계정 생성일
+  photoUrl: { type: String },
 });
 
 // 비밀번호 해싱 (저장 전 비밀번호를 암호화)

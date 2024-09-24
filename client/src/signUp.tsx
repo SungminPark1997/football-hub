@@ -80,13 +80,16 @@ export default function Signup() {
       setIdMessage("아이디를 입력하세요");
     } else {
       try {
-        const response = await fetch("http://localhost:5000/api/check-id", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id }),
-        });
+        const response = await fetch(
+          "http://localhost:5000/api/auth/check-id",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id }),
+          }
+        );
 
         const data = await response.json();
 
@@ -105,7 +108,7 @@ export default function Signup() {
   };
 
   const postSignup = async ({ id, password, email, name }: SignupFormData) => {
-    const response = await fetch("http://localhost:5000/api/register", {
+    const response = await fetch("http://localhost:5000/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -121,6 +124,7 @@ export default function Signup() {
         id: data.user.id,
         username: data.user.username,
         email: data.user.email,
+        profileImage: "https://via.placeholder.com/120",
       })
     );
   };
