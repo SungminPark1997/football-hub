@@ -1,8 +1,9 @@
 import express from "express";
-import { createPost } from "../controllers/postController.js";
+import { getTexts, registerText } from "../controllers/postController.js";
 
-const router = express.Router();
+const postRoutes = express.Router();
 
-//router.post("/", createPost); // 게시글 생성 라우트
-router.post("/");
-export default router;
+postRoutes.post("/", registerText);
+
+postRoutes.get("/getText", getTexts);
+export default postRoutes;

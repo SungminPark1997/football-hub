@@ -1,17 +1,19 @@
-import React from "react";
+// App.tsx
+
 import { Provider } from "react-redux";
-import store from "./store"; // 업데이트된 store 가져오기
+import store from "./store";
 import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
+
 import Home from "./home";
 import Login from "./login";
 import Profile from "./profile";
 import PostForm from "./component/postform";
 import Header from "./component/header";
 import Signup from "./signUp";
-import editProfile from "./editProfile";
 import EditProfile from "./editProfile";
+import PostDetail from "./postDetail";
 
 const GlobalStyles = createGlobalStyle`
   ${reset};
@@ -51,6 +53,7 @@ const router = createBrowserRouter([
       { path: "/profile", element: <Profile /> },
       { path: "/write", element: <PostForm /> },
       { path: "/editProfile", element: <EditProfile /> },
+      { path: "/post/:postId", element: <PostDetail /> },
     ],
   },
 ]);

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { RootState } from "../store";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -56,14 +58,16 @@ const PostForm = () => {
   const { register, handleSubmit } = useForm();
 
   const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.user);
   const onClick = async (data: any) => {
+    console.log(data);
     try {
       const response = await fetch("http://localhost:5000/api/post", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ id: user?.id, data }),
       });
 
       if (response.ok) {
