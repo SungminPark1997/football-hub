@@ -88,10 +88,10 @@ export const getCommentsByPostId = async (req, res) => {
 
     // 댓글을 페이지네이션 방식으로 가져옴
     const comments = await Comment.find({ post: postId })
-      .populate("author", "name") // 작성자의 이름만 가져옴
+      .populate("author", "name id")
       .skip(skip) // 페이지네이션을 위한 skip
       .limit(limit) // 페이지 당 가져올 댓글 수
-      .sort({ createdAt: 1 }); // 최신 댓글이 위로 오도록 정렬
+      .sort({ createdAt: 1 });
 
     // 총 페이지 수 계산
     const totalPages = Math.ceil(totalComments / limit);
@@ -104,5 +104,20 @@ export const getCommentsByPostId = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch comments" });
+  }
+};
+
+export const deleteComments = async (req, res) => {
+  const { commentId } = req.params;
+  try {
+    const deleteComment = await Comment.findByIdAndDelete(commentId);
+
+    if (!deleteComment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    res.status(200).json({ message: "댓글이 삭제되었습니다." });
+  } catch (error) {
+    res.status(500).json({ message: "에러 ", error });
   }
 };

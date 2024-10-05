@@ -17,12 +17,13 @@ const CommentsContainer = styled.div`
 const CommentsList = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 20px 0;
 `;
 
 const CommentItem = styled.li`
   padding: 15px;
   border-bottom: 1px solid #e0e0e0;
+
+  position: relative;
 `;
 
 const Author = styled.strong`
@@ -35,6 +36,21 @@ const Author = styled.strong`
 const CommentContent = styled.p`
   font-size: 0.8em;
   color: #555;
+`;
+const DeleteButton = styled.div`
+  background-color: #444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  position: absolute;
+  top: 10px; // 상단에서 10px
+  right: 10px; // 우측에서 10px
+  &:hover {
+    background-color: #c0392b;
+  }
 `;
 
 const Form = styled.form`
@@ -98,9 +114,11 @@ const PageInfo = styled.span`
 // 댓글 인터페이스
 interface Comment {
   _id: string;
+
   content: string;
   author: {
     name: string;
+    id: string;
   };
 }
 
@@ -112,6 +130,19 @@ interface NewComment {
   content: string;
   userId: string | undefined; // 유저 ID
 }
+const deleteComment = async (commentId: string) => {
+  const response = await fetch(
+    `http://localhost:5000/api/post/comments/${commentId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to delete comment");
+  }
+  return response.json();
+};
 
 export default function Comments({ postId }: PostId) {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
@@ -121,7 +152,6 @@ export default function Comments({ postId }: PostId) {
 
   const queryClient = useQueryClient();
 
-  // react-hook-form 사용
   const {
     register,
     handleSubmit,
@@ -147,7 +177,19 @@ export default function Comments({ postId }: PostId) {
     queryKey: ["comments", currentPage],
     queryFn: () => fetchComments(currentPage),
   });
-  const mutation = useMutation({
+
+  const deleteCommentMutation = useMutation({
+    mutationFn: (commentId: string) => deleteComment(commentId),
+    onSuccess: () => {
+      // 댓글 목록 갱신
+      queryClient.invalidateQueries({ queryKey: ["comments", currentPage] });
+    },
+    onError: (error: any) => {
+      alert(`댓글 삭제 실패: ${error.message}`);
+    },
+  });
+
+  const addCommentMutation = useMutation({
     mutationFn: async (newComment: NewComment) => {
       const response = await fetch(
         `http://localhost:5000/api/post/comments/${postId}`,
@@ -182,7 +224,11 @@ export default function Comments({ postId }: PostId) {
       content: formData.content,
       userId: user?.id,
     };
-    mutation.mutate(newComment); // mutate 호출
+    addCommentMutation.mutate(newComment); // mutate 호출
+  };
+
+  const onDelete = (commentId: string) => {
+    deleteCommentMutation.mutate(commentId);
   };
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -208,6 +254,11 @@ export default function Comments({ postId }: PostId) {
             <CommentItem key={comment._id}>
               <Author>{comment.author.name}</Author>
               <CommentContent>{comment.content}</CommentContent>
+              {user?.id === comment.author.id && (
+                <DeleteButton onClick={() => onDelete(comment._id)}>
+                  X
+                </DeleteButton>
+              )}
             </CommentItem>
           ))}
         </CommentsList>
