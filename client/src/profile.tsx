@@ -72,7 +72,7 @@ export default function Profile() {
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [profileImage, setProfileImage] = useState(user?.profileImage);
-
+  console.log(user);
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("token"); // 로그아웃 시 토큰 삭제
