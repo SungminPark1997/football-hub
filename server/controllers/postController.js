@@ -16,7 +16,7 @@ export const registerText = async (req, res) => {
     const newText = new Text({
       title,
       content,
-      author: author._id, // 찾은 사용자의 ObjectId를 author로 저장
+      author: author.postId, // 찾은 사용자의 ObjectId를 author로 저장
     });
 
     // MongoDB에 글 저장
@@ -44,6 +44,30 @@ export const getTexts = async (req, res) => {
   }
 };
 
+export const deleteTexts = async (req, res) => {
+  const { postId } = req.params;
+  try {
+    const texts = await Text.findByIdAndDelete(postId);
+    if (!texts) {
+      return res.status(404).json({ message: "Text not found" });
+    }
+    return res.status(200).json({ message: "포스트가 삭제되었습니다" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch texts", error });
+  }
+};
+export const getLatestTexts = async (req, res) => {
+  try {
+    const texts = await Text.find()
+      .populate("author", "name email")
+      .sort({ createdAt: -1 })
+      .limit(10);
+    res.status(200).json(texts);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch texts", error });
+  }
+};
+
 export const registerComment = async (req, res) => {
   try {
     // req.params에서 postId 추출
@@ -60,8 +84,8 @@ export const registerComment = async (req, res) => {
     // 2. 새로운 댓글 생성
     const newComment = new Comment({
       content,
-      author: user._id, // 인증된 사용자의 ID를 댓글 작성자로 설정 (req.user는 미들웨어에서 사용자 인증 후 설정된다고 가정)
-      post: post._id,
+      author: user.postId, // 인증된 사용자의 ID를 댓글 작성자로 설정 (req.user는 미들웨어에서 사용자 인증 후 설정된다고 가정)
+      post: post.postId,
     });
 
     // 3. 댓글 저장
