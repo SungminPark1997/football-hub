@@ -63,7 +63,8 @@ export default function Login() {
             id: data.user.id,
             username: data.user.username,
             email: data.user.email,
-            profileImage: "https://via.placeholder.com/120",
+            profileImage:
+              data.user.photoUrl || "https://via.placeholder.com/120",
           })
         );
         navigate("/");

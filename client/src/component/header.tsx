@@ -73,6 +73,7 @@ const Header = () => {
     if (isLogin) {
       dispatch(logout());
       localStorage.removeItem("token"); // 로그아웃 시 JWT 삭제
+      navigate("/login");
     } else {
       navigate("/login");
     }

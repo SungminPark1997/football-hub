@@ -69,6 +69,7 @@ export const loginUser = async (req, res) => {
         id: user.id,
         username: user.name,
         email: user.email,
+        ...(user.photoUrl && { photoUrl: user.photoUrl }),
       },
     });
   } catch (error) {

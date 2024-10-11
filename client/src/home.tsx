@@ -1,6 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { RootState } from "./store";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -31,13 +33,29 @@ const PostItem = styled.li`
   display: flex;
   flex-direction: column;
   cursor: pointer; /* 클릭 가능하게 변경 */
-
+  position: relative;
   &:last-child {
     border-bottom: none;
   }
 
   &:hover {
     background-color: #f1f3f5; /* hover 시 색상 변경 */
+  }
+`;
+
+const DeleteButton = styled.div`
+  background-color: #444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  position: absolute;
+  top: 3px;
+  right: 10px; // 우측에서 10px
+  &:hover {
+    background-color: #c0392b;
   }
 `;
 
@@ -69,6 +87,19 @@ const fetchTexts = async () => {
   }
   return response.json();
 };
+const deletePost = async (postId: string) => {
+  const response = await fetch(
+    `http://localhost:5000/api/post/deleteText/${postId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to delete Text");
+  }
+  return response.json();
+};
 
 interface Author {
   name: string;
@@ -82,17 +113,32 @@ interface Post {
 }
 
 export default function Home() {
+  const user = useSelector((state: RootState) => state.auth.user);
   const { data, isLoading, isError, error } = useQuery<Post[]>({
     queryKey: ["posts"],
     queryFn: fetchTexts,
   });
-
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const handleClick = (post: Post) => {
     navigate(`/post/${post._id}`, { state: { post } });
   };
+  const deletePostMutaition = useMutation({
+    mutationFn: (postId: string) => deletePost(postId),
+    onSuccess: () => {
+      // 댓글 목록 갱신
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError: (error: any) => {
+      alert(`댓글 삭제 실패: ${error.message}`);
+    },
+  });
 
+  const onDeletePost = (postId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    deletePostMutaition.mutate(postId);
+  };
   if (isLoading) {
     return <LoadingMessage>Loading...</LoadingMessage>;
   }
@@ -109,6 +155,13 @@ export default function Home() {
             <PostItem key={post._id} onClick={() => handleClick(post)}>
               <PostTitle>제목: {post.title}</PostTitle>
               <AuthorInfo>Author: {post.author.name}</AuthorInfo>
+              {user?.username === post.author.name && (
+                <DeleteButton
+                  onClick={(event) => onDeletePost(post._id, event)}
+                >
+                  X
+                </DeleteButton>
+              )}
             </PostItem>
           ))}
         </PostList>
