@@ -28,10 +28,8 @@ const GlobalStyles = createGlobalStyle`
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  height: 110vh;
+
   background-color: #2c3e50;
 `;
 
@@ -60,12 +58,10 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <Provider store={store}>
-      <Wrapper>
-        <GlobalStyles />
-        <RouterProvider router={router} />
-      </Wrapper>
-    </Provider>
+    <Wrapper>
+      <GlobalStyles />
+      <RouterProvider router={router} />
+    </Wrapper>
   );
 }
 
