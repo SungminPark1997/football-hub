@@ -16,7 +16,7 @@ export const registerText = async (req, res) => {
     const newText = new Text({
       title,
       content,
-      author: author.postId, // 찾은 사용자의 ObjectId를 author로 저장
+      author: author._id, // 찾은 사용자의 ObjectId를 author로 저장
     });
 
     // MongoDB에 글 저장

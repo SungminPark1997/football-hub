@@ -3,14 +3,19 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { RootState } from "./store";
+import UpcomingMatches from "./component/upComingMatches";
+import { deletePost, fetchTexts } from "./api/postApiService";
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100vh; /* 높이 설정을 유지 */
+`;
+
+const BoardWrapper = styled.div`
   padding: 20px;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column; /* 세로 방향으로 배치 */
+  align-items: center; /* 가운데 정렬 */
 `;
 
 const Board = styled.div`
@@ -19,6 +24,7 @@ const Board = styled.div`
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  margin-bottom: 20px; /* UpcomingMatches와의 간격 */
 `;
 
 const PostList = styled.ul`
@@ -80,27 +86,6 @@ const ErrorMessage = styled.div`
   color: red;
 `;
 
-const fetchTexts = async () => {
-  const response = await fetch("http://localhost:5000/api/post/getText");
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-  return response.json();
-};
-const deletePost = async (postId: string) => {
-  const response = await fetch(
-    `http://localhost:5000/api/post/deleteText/${postId}`,
-    {
-      method: "DELETE",
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to delete Text");
-  }
-  return response.json();
-};
-
 interface Author {
   name: string;
 }
@@ -124,10 +109,10 @@ export default function Home() {
   const handleClick = (post: Post) => {
     navigate(`/post/${post._id}`, { state: { post } });
   };
-  const deletePostMutaition = useMutation({
+
+  const deletePostMutation = useMutation({
     mutationFn: (postId: string) => deletePost(postId),
     onSuccess: () => {
-      // 댓글 목록 갱신
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: (error: any) => {
@@ -137,8 +122,9 @@ export default function Home() {
 
   const onDeletePost = (postId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    deletePostMutaition.mutate(postId);
+    deletePostMutation.mutate(postId);
   };
+
   if (isLoading) {
     return <LoadingMessage>Loading...</LoadingMessage>;
   }
@@ -149,23 +135,28 @@ export default function Home() {
 
   return (
     <Wrapper>
-      <Board>
-        <PostList>
-          {data?.map((post) => (
-            <PostItem key={post._id} onClick={() => handleClick(post)}>
-              <PostTitle>제목: {post.title}</PostTitle>
-              <AuthorInfo>Author: {post.author.name}</AuthorInfo>
-              {user?.username === post.author.name && (
-                <DeleteButton
-                  onClick={(event) => onDeletePost(post._id, event)}
-                >
-                  X
-                </DeleteButton>
-              )}
-            </PostItem>
-          ))}
-        </PostList>
-      </Board>
+      <BoardWrapper>
+        {" "}
+        <Board>
+          <PostList>
+            {data?.map((post) => (
+              <PostItem key={post._id} onClick={() => handleClick(post)}>
+                <PostTitle>제목: {post.title}</PostTitle>
+                <AuthorInfo>Author: {post.author.name}</AuthorInfo>
+                {user?.username === post.author.name && (
+                  <DeleteButton
+                    onClick={(event) => onDeletePost(post._id, event)}
+                  >
+                    X
+                  </DeleteButton>
+                )}
+              </PostItem>
+            ))}
+          </PostList>
+        </Board>
+      </BoardWrapper>
+
+      <UpcomingMatches></UpcomingMatches>
     </Wrapper>
   );
 }
