@@ -4,6 +4,10 @@ import Slider from "react-slick";
 import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import {
+  fetchUpcomingClMatches,
+  fetchUpcomingPlMatches,
+} from "../api/footballApi";
 
 interface Team {
   id: number;
@@ -11,15 +15,15 @@ interface Team {
   crest: string;
 }
 
-interface UpcomingUclMatch {
+interface UpcomingMatch {
   id: number;
   utcDate: string;
   homeTeam: Team;
   awayTeam: Team;
 }
 
-interface UpcomingUclMatchResponse {
-  matches: UpcomingUclMatch[];
+interface UpcomingMatchResponse {
+  matches: UpcomingMatch[];
 }
 const Wrapper = styled.div`
   width: 100%;
@@ -28,8 +32,7 @@ const Wrapper = styled.div`
 const UpcommingMatchesWrapper = styled.div`
   width: 100%;
   height: 200px;
-
-  gap: 0px;
+  margin-bottom: 30px;
 `;
 const UpcommingMatchTitle = styled.div`
   width: 100%;
@@ -46,6 +49,7 @@ const MatchItem = styled.div`
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
 `;
 
 const StyledSlider = styled(Slider)`
@@ -84,7 +88,9 @@ const StyledSlider = styled(Slider)`
   .slick-next::before {
     display: none; /* 기본 화살표 아이콘 숨김 */
   }
-
+  .slick-list {
+    margin: 0 -10px; /* 전체 슬라이더의 여백 보정을 위해 좌우 마이너스 마진 설정 */
+  }
   .slick-prev::after {
     content: "◀"; /* 왼쪽 화살표 아이콘 */
     font-size: 20px;
@@ -131,43 +137,51 @@ const Team = styled.div`
   align-items: center;
   flex-direction: column;
 `;
-const MatchTime = styled.span`
+const MatchTime = styled.div`
   font-size: 0.8rem;
   color: #495057;
+
+  position: absolute;
+  bottom: 5px;
+
+  align-items: flex-end;
 `;
 
-const fetchUpcomingMatches = async () => {
-  const response = await fetch("http://localhost:5000/api/match/cl");
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-  return response.json();
-};
-
 export default function UpcomingMatches() {
-  const { data, isLoading, isError } = useQuery<UpcomingUclMatchResponse>({
-    queryKey: ["upcomingMatches"],
-    queryFn: fetchUpcomingMatches,
+  const {
+    data: uclData,
+    isLoading: isLoadingUclData,
+    isError: idErrorUclData,
+  } = useQuery<UpcomingMatchResponse>({
+    queryKey: ["upcomingClMatches"],
+    queryFn: fetchUpcomingClMatches,
   });
-
+  const {
+    data: eplData,
+    isLoading: isLoadingEplData,
+    isError: isErrorEplData,
+  } = useQuery<UpcomingMatchResponse>({
+    queryKey: ["upcomingPlMatches"],
+    queryFn: fetchUpcomingPlMatches,
+  });
   const settings = {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 5, // 화면에 보여줄 슬라이드 수
-    slidesToScroll: 1, // 한번에 스크롤할 슬라이드 수
+    slidesToShow: 4,
+    slidesToScroll: 2,
     arrows: true,
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error fetching matches</div>;
+  if (isLoadingUclData) return <div>Loading...</div>;
+  if (idErrorUclData) return <div>Error fetching matches</div>;
 
   return (
     <Wrapper>
       <UpcommingMatchTitle>챔피언스리그 일정</UpcommingMatchTitle>
       <UpcommingMatchesWrapper>
         <StyledSlider {...settings}>
-          {data?.matches?.map((match) => (
+          {uclData?.matches?.map((match) => (
             <MatchItem key={match.id}>
               <MatchDate>
                 {new Date(match.utcDate).toLocaleDateString()}
@@ -185,7 +199,34 @@ export default function UpcomingMatches() {
                 </Team>
               </Teams>
               <MatchTime>
-                {new Date(match.utcDate).toLocaleTimeString()}
+                {new Date(match.utcDate).toLocaleTimeString().slice(0, -3)}
+              </MatchTime>
+            </MatchItem>
+          ))}
+        </StyledSlider>
+      </UpcommingMatchesWrapper>
+      <UpcommingMatchTitle>프리미어리그 일정</UpcommingMatchTitle>
+      <UpcommingMatchesWrapper>
+        <StyledSlider {...settings}>
+          {eplData?.matches?.map((match) => (
+            <MatchItem key={match.id}>
+              <MatchDate>
+                {new Date(match.utcDate).toLocaleDateString()}
+              </MatchDate>
+              <Teams>
+                <Team>
+                  {" "}
+                  <img src={match.homeTeam.crest} alt={match.homeTeam.name} />
+                  {match.homeTeam.name + "(Home)"}
+                </Team>
+                <Team>
+                  {" "}
+                  <img src={match.awayTeam.crest} alt={match.awayTeam.name} />
+                  {match.awayTeam.name + "(Away)"}
+                </Team>
+              </Teams>
+              <MatchTime>
+                {new Date(match.utcDate).toLocaleTimeString().slice(0, -3)}
               </MatchTime>
             </MatchItem>
           ))}

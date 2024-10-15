@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { RootState } from "./store";
 import UpcomingMatches from "./component/upComingMatches";
+import { deletePost, fetchTexts } from "./api/postApiService";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -84,28 +85,6 @@ const ErrorMessage = styled.div`
   font-size: 1.2rem;
   color: red;
 `;
-
-const fetchTexts = async () => {
-  const response = await fetch("http://localhost:5000/api/post/getText");
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-  return response.json();
-};
-
-const deletePost = async (postId: string) => {
-  const response = await fetch(
-    `http://localhost:5000/api/post/deleteText/${postId}`,
-    {
-      method: "DELETE",
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to delete Text");
-  }
-  return response.json();
-};
 
 interface Author {
   name: string;

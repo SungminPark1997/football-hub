@@ -1,5 +1,9 @@
 import express from "express";
-import { getUclMatches } from "../controllers/matchController.js";
+import {
+  getEplMatches,
+  getUclMatches,
+} from "../controllers/matchController.js";
 const matchRoutes = express.Router();
 matchRoutes.get("/cl", getUclMatches);
+matchRoutes.get("/pl", getEplMatches);
 export default matchRoutes;
