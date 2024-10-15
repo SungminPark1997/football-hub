@@ -29,13 +29,12 @@ const UpcommingMatchesWrapper = styled.div`
   width: 100%;
   height: 200px;
 
-  display: flex;
-  align-items: center;
-  overflow: hidden;
+  gap: 0px;
 `;
 const UpcommingMatchTitle = styled.div`
   width: 100%;
   padding-bottom: 10px;
+  font-size: 1.5em;
 `;
 const MatchItem = styled.div`
   height: 200px;
@@ -54,8 +53,8 @@ const StyledSlider = styled(Slider)`
   height: 100%;
 
   .slick-slide {
-    margin: 0 10px; /* 슬라이드 간격 */
     transition: transform 0.3s; /* 슬라이드 애니메이션 효과 */
+    padding: 0 10px;
   }
 
   .slick-prev,
@@ -90,12 +89,15 @@ const StyledSlider = styled(Slider)`
     content: "◀"; /* 왼쪽 화살표 아이콘 */
     font-size: 20px;
     color: black; /* 기본 색상 */
+    line-width: 50px;
+    line-height: 50px;
   }
 
   .slick-next::after {
     content: "▶"; /* 오른쪽 화살표 아이콘 */
     font-size: 20px;
     color: black; /* 기본 색상 */
+    line-height: 50px;
   }
 
   .slick-prev:hover,
@@ -117,14 +119,18 @@ const Teams = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-
+  gap: 10px;
   img {
     width: 30px;
     height: 30px;
     margin: 5px 0;
   }
 `;
-
+const Team = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+`;
 const MatchTime = styled.span`
   font-size: 0.8rem;
   color: #495057;
@@ -167,10 +173,16 @@ export default function UpcomingMatches() {
                 {new Date(match.utcDate).toLocaleDateString()}
               </MatchDate>
               <Teams>
-                <img src={match.homeTeam.crest} alt={match.homeTeam.name} />
-                {match.homeTeam.name} vs{" "}
-                <img src={match.awayTeam.crest} alt={match.awayTeam.name} />
-                {match.awayTeam.name}
+                <Team>
+                  {" "}
+                  <img src={match.homeTeam.crest} alt={match.homeTeam.name} />
+                  {match.homeTeam.name + "(Home)"}
+                </Team>
+                <Team>
+                  {" "}
+                  <img src={match.awayTeam.crest} alt={match.awayTeam.name} />
+                  {match.awayTeam.name + "(Away)"}
+                </Team>
               </Teams>
               <MatchTime>
                 {new Date(match.utcDate).toLocaleTimeString()}
