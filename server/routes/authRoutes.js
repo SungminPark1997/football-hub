@@ -4,6 +4,7 @@ import {
   loginUser,
   checkIdAvailability,
   updateProfile,
+  logout,
 } from "../controllers/authcontroller.js";
 import { avatarUpload } from "../middleware.js";
 
@@ -11,6 +12,7 @@ const authRoutes = express.Router();
 
 authRoutes.post("/register", registerUser); // 회원가입
 authRoutes.post("/login", loginUser); // 로그인
+authRoutes.post("/logout", logout);
 authRoutes.post("/check-id", checkIdAvailability); // ID 중복 확인
 authRoutes.post(
   "/update-profile",

@@ -17,6 +17,7 @@ export const registerText = async (req, res) => {
       title,
       content,
       author: author._id, // 찾은 사용자의 ObjectId를 author로 저장
+      createdAt: Date.now(),
     });
 
     // MongoDB에 글 저장
@@ -35,7 +36,9 @@ export const registerText = async (req, res) => {
 export const getTexts = async (req, res) => {
   try {
     // 모든 텍스트와 관련된 author 정보를 함께 조회합니다.
-    const texts = await Text.find().populate("author", "name email");
+    const texts = await Text.find()
+      .populate("author", "name email")
+      .sort({ createdAt: 1 });
 
     res.status(200).json(texts);
   } catch (error) {
@@ -84,8 +87,8 @@ export const registerComment = async (req, res) => {
     // 2. 새로운 댓글 생성
     const newComment = new Comment({
       content,
-      author: user.postId, // 인증된 사용자의 ID를 댓글 작성자로 설정 (req.user는 미들웨어에서 사용자 인증 후 설정된다고 가정)
-      post: post.postId,
+      author: user._id, // 인증된 사용자의 ID를 댓글 작성자로 설정 (req.user는 미들웨어에서 사용자 인증 후 설정된다고 가정)
+      post: post._id,
     });
 
     // 3. 댓글 저장

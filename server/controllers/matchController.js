@@ -46,7 +46,7 @@ export const getUclMatches = async (req, res) => {
 
 export const getEplMatches = async (req, res) => {
   const url =
-    "https://api.football-data.org/v4/competitions/PL/matches?matchday=8";
+    "https://api.football-data.org/v4/competitions/PL/matches?matchday=11";
   try {
     const response = await fetch(url, {
       method: "GET",

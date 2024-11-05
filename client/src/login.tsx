@@ -57,7 +57,6 @@ export default function Login() {
 
       const data = await response.json();
       if (response.ok) {
-        localStorage.setItem("token", data.token); // JWT를 로컬 스토리지에 저장
         dispatch(
           loginSuccess({
             id: data.user.id,
@@ -67,6 +66,7 @@ export default function Login() {
               data.user.photoUrl || "https://via.placeholder.com/120",
           })
         );
+
         navigate("/");
       } else {
         dispatch(setError(data.message)); // 에러 메시지 처리

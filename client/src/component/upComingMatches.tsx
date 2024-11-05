@@ -8,6 +8,7 @@ import {
   fetchUpcomingClMatches,
   fetchUpcomingPlMatches,
 } from "../api/footballApi";
+import { useNavigate } from "react-router-dom";
 
 interface Team {
   id: number;
@@ -50,6 +51,7 @@ const MatchItem = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
+  cursor: pointer;
 `;
 
 const StyledSlider = styled(Slider)`
@@ -148,6 +150,7 @@ const MatchTime = styled.div`
 `;
 
 export default function UpcomingMatches() {
+  const navigate = useNavigate();
   const {
     data: uclData,
     isLoading: isLoadingUclData,
@@ -172,7 +175,9 @@ export default function UpcomingMatches() {
     slidesToScroll: 2,
     arrows: true,
   };
-
+  const clickItem = (match: UpcomingMatch) => {
+    navigate(`/match/:${match.id}`, { state: match });
+  };
   if (isLoadingUclData) return <div>Loading...</div>;
   if (idErrorUclData) return <div>Error fetching matches</div>;
 
@@ -182,7 +187,7 @@ export default function UpcomingMatches() {
       <UpcommingMatchesWrapper>
         <StyledSlider {...settings}>
           {uclData?.matches?.map((match) => (
-            <MatchItem key={match.id}>
+            <MatchItem key={match.id} onClick={() => clickItem(match)}>
               <MatchDate>
                 {new Date(match.utcDate).toLocaleDateString()}
               </MatchDate>

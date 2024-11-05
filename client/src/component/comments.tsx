@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import styled from "styled-components";
+import { deleteComment } from "../api/postApiService";
 
 const CommentsContainer = styled.div`
   max-width: 600px;
@@ -130,19 +131,6 @@ interface NewComment {
   content: string;
   userId: string | undefined; // 유저 ID
 }
-const deleteComment = async (commentId: string) => {
-  const response = await fetch(
-    `http://localhost:5000/api/post/comments/${commentId}`,
-    {
-      method: "DELETE",
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to delete comment");
-  }
-  return response.json();
-};
 
 export default function Comments({ postId }: PostId) {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지

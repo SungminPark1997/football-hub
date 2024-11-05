@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
+import { application } from "express";
 
 // ID 중복 확인
 export const checkIdAvailability = async (req, res) => {
@@ -61,10 +62,10 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign({ id: user._id }, "your_jwt_secret", {
       expiresIn: "1h",
     });
-
+    req.session.loggedIn = true;
+    req.session.user = user;
     res.status(200).json({
       message: "Login successful",
-      token,
       user: {
         id: user.id,
         username: user.name,
@@ -100,4 +101,13 @@ export const updateProfile = async (req, res) => {
     console.error("Error updating profile:", error);
     res.status(500).json({ message: "Failed to update profile" });
   }
+};
+export const logout = (req, res) => {
+  req.session.destroy(async (err) => {
+    if (err) {
+      return res.status(500).send("Logout failed");
+    }
+    await res.clearCookie("connect.sid"); // 세션 쿠키 삭제
+    res.status(200).send("Logged out");
+  });
 };

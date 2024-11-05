@@ -32,23 +32,6 @@ const PostList = styled.ul`
   padding: 0;
   margin: 0;
 `;
-
-const PostItem = styled.li`
-  border-bottom: 1px solid #dee2e6;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer; /* 클릭 가능하게 변경 */
-  position: relative;
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &:hover {
-    background-color: #f1f3f5; /* hover 시 색상 변경 */
-  }
-`;
-
 const DeleteButton = styled.div`
   background-color: #444;
   color: white;
@@ -63,12 +46,32 @@ const DeleteButton = styled.div`
   &:hover {
     background-color: #c0392b;
   }
+  display: none;
+`;
+const PostItem = styled.li`
+  border-bottom: 1px solid #dee2e6;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer; /* 클릭 가능하게 변경 */
+  position: relative;
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: #f1f3f5; /* hover 시 색상 변경 */
+  }
+  &:hover ${DeleteButton} {
+    display: block; /* hover될 때 X 버튼이 보이도록 설정 */
+  }
 `;
 
 const PostTitle = styled.h2`
   margin: 0;
   font-size: 1.1rem;
   color: #343a40;
+  font-weight: bold;
 `;
 
 const AuthorInfo = styled.small`
@@ -76,6 +79,13 @@ const AuthorInfo = styled.small`
   align-self: flex-end;
 `;
 
+const CreatedAt = styled.div`
+  color: #868e96;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 5px;
+`;
 const LoadingMessage = styled.div`
   font-size: 1.2rem;
   color: #343a40;
@@ -95,6 +105,7 @@ interface Post {
   title: string;
   content: string;
   author: Author;
+  createdAt: string;
 }
 
 export default function Home() {
@@ -122,7 +133,10 @@ export default function Home() {
 
   const onDeletePost = (postId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    deletePostMutation.mutate(postId);
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm("정말로 이 항목을 삭제하시겠습니까?")) {
+      deletePostMutation.mutate(postId);
+    }
   };
 
   if (isLoading) {
@@ -141,8 +155,13 @@ export default function Home() {
           <PostList>
             {data?.map((post) => (
               <PostItem key={post._id} onClick={() => handleClick(post)}>
-                <PostTitle>제목: {post.title}</PostTitle>
-                <AuthorInfo>Author: {post.author.name}</AuthorInfo>
+                <PostTitle>{post.title}</PostTitle>
+                <AuthorInfo>{post.author.name}</AuthorInfo>
+                <CreatedAt>
+                  {new Date(post.createdAt).toLocaleDateString()}{" "}
+                  {new Date(post.createdAt).toLocaleTimeString().slice(0, -3)}
+                </CreatedAt>
+
                 {user?.username === post.author.name && (
                   <DeleteButton
                     onClick={(event) => onDeletePost(post._id, event)}

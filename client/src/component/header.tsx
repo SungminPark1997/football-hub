@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
@@ -7,13 +7,14 @@ import { logout, loginSuccess } from "../features/user/authSlice";
 import { RootState } from "../store";
 import MenuIcon from "@mui/icons-material/Menu";
 import SideBar from "./sidebar";
+
 const HeaderWrapper = styled.div`
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background-color: #2c3e50;
+  background-color: #1a2b3c;
   position: relative;
 `;
 
@@ -69,11 +70,21 @@ const Header = () => {
   const dispatch = useDispatch();
   const [isSideBar, setSidebar] = useState(false);
 
-  const clickLogin = () => {
+  const clickLogin = async () => {
     if (isLogin) {
       dispatch(logout());
-      localStorage.removeItem("token"); // 로그아웃 시 JWT 삭제
-      navigate("/login");
+      const response = await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        navigate("/login");
+      } else {
+        alert("로그인 실패");
+      }
     } else {
       navigate("/login");
     }

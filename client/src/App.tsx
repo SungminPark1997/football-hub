@@ -1,7 +1,5 @@
 // App.tsx
 
-import { Provider } from "react-redux";
-import store from "./store";
 import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
@@ -14,6 +12,7 @@ import Header from "./component/header";
 import Signup from "./signUp";
 import EditProfile from "./editProfile";
 import PostDetail from "./postDetail";
+import MatchPredict from "./matchPredict";
 
 const GlobalStyles = createGlobalStyle`
   ${reset};
@@ -30,7 +29,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100vh; /* 부모 요소의 높이를 뷰포트의 높이로 설정 */
   overflow: hidden; /* 부모 요소에서 스크롤 숨기기 */
-  background-color: #2c3e50;
+  background-color: #1a2b3c;
 `;
 
 const ContentWrapper = styled.div`
@@ -55,6 +54,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: "/", element: <Home /> },
+      { path: "/match/:matchId", element: <MatchPredict /> },
       { path: "/login", element: <Login /> },
       { path: "/signUp", element: <Signup /> },
       { path: "/profile", element: <Profile /> },
